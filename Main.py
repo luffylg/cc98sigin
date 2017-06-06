@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import time
@@ -5,6 +6,7 @@ from configparser import ConfigParser
 from datetime import datetime
 
 from selenium import webdriver
+logging.basicConfig(filename='cc98sigin.log', filemode='a',level=logging.INFO)
 
 
 class Site:
@@ -27,6 +29,7 @@ class Site:
             times = \
             re.findall(r'\d', self.driver.find_element_by_xpath('/html/body/form/table/tbody/tr[4]/td/p[2]').text)[0]
             print('已连续签到{0}天了！'.format(times))
+            logging.info('continous {0} days'.format(times))
             return True
         return False
 
@@ -54,6 +57,7 @@ class Site:
 
     def run(self):
         print(datetime.now())
+        logging.info(datetime.now())
         self.driver.get('http://www.cc98.org/index.asp')
         if not self.driver.find_elements_by_xpath('/html/body/table[2]/tbody/tr/td[2]/a[1]'):
             self.login()
@@ -71,6 +75,8 @@ def getconfig(section, key):
     path = os.path.split(os.path.realpath(__file__))[0] + '\\user.conf'
     config.read(path)
     return config.get(section, key)
+
+# 使用windows计划任务管理，有毒。
 
 if __name__ == '__main__':
     username = getconfig('user','username')
